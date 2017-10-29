@@ -7,24 +7,45 @@ public class MazeGenerator : MonoBehaviour {
 
 	public int rows;
 	public int cols;
+	public float scaleOfEachCell;
+	public float heightOfWall;
 
 	private int[,,] maze;
 	//Maze is (rows x cols x 5) where the 5 element array for each cell represents
 	//The 5 element array = [WallUp, WallRight, WallDown, WallLeft, isVisited] where 1 represents true and 0 represents false
 
 	public GameObject floor;
-	//public GameObject wall;
+	public GameObject wall;
 
 	void putMazeInUnity(){
 		for (int r = 0; r < rows; r++) {
 			for (int c = 0; c < cols; c++) {
 				GameObject newFloor = Instantiate (floor, new Vector3 (r, 0, c), Quaternion.identity) as GameObject; 
-				newFloor.AddComponent<Rigidbody> ();
-				for (int wallIndex = 0; wallIndex < 4; wallIndex++) {
-					if (maze [r, c, wallIndex] == 1) {
-
-					}
+				//newFloor.AddComponent<Rigidbody> ();
+				if (maze [r,c,0] == 1) {
+					Quaternion q = Quaternion.identity;
+					q.eulerAngles = new Vector3 (0, 180, 90);
+					GameObject gameWall = Instantiate (wall, new Vector3 (r - scaleOfEachCell / 2, heightOfWall/2, c), q) as GameObject;
+					//gameWall.AddComponent<Rigidbody> ();
 				}
+				if (maze [r,c,1] == 1) {
+					Quaternion q = Quaternion.identity;
+					q.eulerAngles = new Vector3 (0, 270, 90);
+					GameObject gameWall = Instantiate (wall, new Vector3 (r, heightOfWall/2, c + scaleOfEachCell / 2), q) as GameObject;
+					//gameWall.AddComponent<Rigidbody> ();
+				}
+				if (maze [r,c,2] == 1) {
+					Quaternion q = Quaternion.identity;
+					q.eulerAngles = new Vector3 (0, 0, 90);
+					GameObject gameWall = Instantiate (wall, new Vector3 (r + scaleOfEachCell / 2, heightOfWall/2, c), q) as GameObject;
+					//gameWall.AddComponent<Rigidbody> ();
+				}
+				if (maze [r,c,3] == 1) {
+					Quaternion q = Quaternion.identity;
+					q.eulerAngles = new Vector3 (0, 90, 90);
+					GameObject gameWall = Instantiate (wall, new Vector3 (r, heightOfWall/2, c - scaleOfEachCell / 2), q) as GameObject;
+					//gameWall.AddComponent<Rigidbody> ();
+				}				
 			}
 		}
 	}
@@ -84,12 +105,9 @@ public class MazeGenerator : MonoBehaviour {
 		return sectionedMaze;
 	}
 
-	void generateWithPrimsAlgorithm(){
-
-	}
-
 	void Start(){
 		initializeMaze ();
+		maze = generateMazeWithRecursiveDivision (maze);
 		putMazeInUnity ();
 
 	}
