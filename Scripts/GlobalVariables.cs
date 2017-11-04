@@ -1,8 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class GlobalVariables : MonoBehaviour {
+public static class GlobalVariables{
 
     //first is row of mze, second is column, third describes walls around and if traps on the current cell 
     public static int[,,] maze;
