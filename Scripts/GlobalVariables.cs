@@ -26,7 +26,7 @@ public static class GlobalVariables{
     //
     public static float levelMultiplier;
 
-    void Update() {
+    static void Update() {
         score = (timeMultiplier) * time + (levelMultiplier) * level + monstersPoints;
     }
 
