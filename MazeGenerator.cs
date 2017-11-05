@@ -12,7 +12,7 @@ public class MazeGenerator : MonoBehaviour {
 
 	private int[,,] maze;
 	//Maze is (rows x cols x 5) where the 5 element array for each cell represents
-	//The 5 element array = [WallUp, WallRight, WallDown, WallLeft, isVisited] where 1 represents true and 0 represents false
+	//The 5 element array = [WallUp, WallRight, WallDown, WallLeft, trapType] where 1 represents true and 0 represents false
 
 	public GameObject floor;
 	public GameObject wall;
@@ -24,22 +24,22 @@ public class MazeGenerator : MonoBehaviour {
 				if (maze [r,c,0] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 180, 90);
-					GameObject gameWall = Instantiate (wall, new Vector3 ((r - scaleOfEachCell / 2)*scaleOfEachCell, heightOfWall/2, c*scaleOfEachCell), q) as GameObject;
+					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell - scaleOfEachCell / 2, heightOfWall/2, c*scaleOfEachCell), q) as GameObject;
 				}
 				if (maze [r,c,1] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 270, 90);
-					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell, heightOfWall/2, c*scaleOfEachCell + scaleOfEachCell*scaleOfEachCell / 2), q) as GameObject;
+					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell, heightOfWall/2, c*scaleOfEachCell + scaleOfEachCell / 2), q) as GameObject;
 				}
 				if (maze [r,c,2] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 0, 90);
-					GameObject gameWall = Instantiate (wall, new Vector3 ((r + scaleOfEachCell / 2)*scaleOfEachCell, heightOfWall/2, c*scaleOfEachCell), q) as GameObject;
+					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell + scaleOfEachCell / 2, heightOfWall/2, c*scaleOfEachCell), q) as GameObject;
 				}
 				if (maze [r,c,3] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 90, 90);
-					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell, heightOfWall/2, (c - scaleOfEachCell / 2)*scaleOfEachCell), q) as GameObject;
+					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell, heightOfWall/2, c*scaleOfEachCell - scaleOfEachCell / 2), q) as GameObject;
 				}				
 			}
 		}
@@ -61,59 +61,73 @@ public class MazeGenerator : MonoBehaviour {
 		}
 	}
 
-	int[,,] generateMazeWithRecursiveDivision(int[,,] sectionedMaze){
+	int[,,] generateMazeWithRecursiveDivision(int[,,] sectionedMaze, int startRowIndex, int endRowIndex, int startColIndex, int endColIndex){
 		//Recursive division
 		//Random row and column for a wall
 		//Put a hole in the wall for each and call function again on the smaller chambers
-		if (sectionedMaze.Length == 1) {
+		if (startRowIndex + 2 >= endRowIndex || startColIndex + 2 >= endColIndex) {
 			return sectionedMaze;
 		}
-		int randColWall = Random.Range (0, cols - 2); //Put wall right of this column
-		int randRowWall = Random.Range (0, rows - 2); //Put wall below this column
-		for (int i = 0; i < cols; i++) {
+		int randColWall = Random.Range (startColIndex, endColIndex - 1); //Put wall right of this column
+//		print("randColWall " + randColWall); 
+		int randRowWall = Random.Range (startRowIndex, endRowIndex - 1); //Put wall below this column
+//		print("randRowWall " + randRowWall); 
+
+		for (int i = startColIndex; i < endColIndex + 1; i++) {
 			sectionedMaze [randRowWall, i, 2] = 1;
-			sectionedMaze [randRowWall + 2, i, 0] = 1;
+			sectionedMaze [randRowWall + 1, i, 0] = 1;
 		}
-		for (int i = 0; i < rows; i++) {
+		for (int i = startRowIndex; i < endRowIndex + 1; i++) {
 			sectionedMaze [i, randColWall, 1] = 1;
-			sectionedMaze [i, randColWall + 2, 3] = 1;
+			sectionedMaze [i, randColWall + 1, 3] = 1;
 		}
 		//1st slit
-		int randColSlit = Random.Range (0, cols - 1);
+		int randColSlit = Random.Range (startColIndex, endColIndex);
+		while (randColSlit == randRowWall) {
+			randColSlit = Random.Range (startColIndex, endColIndex);
+		}
 		sectionedMaze [randRowWall, randColSlit, 2] = 0;
+		sectionedMaze [randRowWall + 1, randColSlit, 0] = 0;
 
 		//2nd slit
-		int randRowSlit = Random.Range (0, rows - 1);
+		int randRowSlit = Random.Range (startRowIndex, endRowIndex);
+		while (randRowSlit == randColWall) {
+			randRowSlit = Random.Range (startRowIndex, endRowIndex);
+		}
 		sectionedMaze [randRowSlit, randColWall, 1] = 0;
+		sectionedMaze [randRowSlit, randColWall + 1, 3] = 0;
 
 		//Getting 3rd slit
 		if (Random.Range (0, 1) == 0) {
 			if (randColSlit > randColWall) {
-				sectionedMaze [randRowWall, Random.Range (0, randColWall - 1), 2] = 0;
-				sectionedMaze [randRowWall + 2, Random.Range (0, randColWall - 1), 0] = 0;
+				sectionedMaze [randRowWall, Random.Range (startColIndex, randColWall - 1), 2] = 0;
+				sectionedMaze [randRowWall + 1, Random.Range (startColIndex, randColWall - 1), 0] = 0;
 			} else {
-				sectionedMaze [randRowWall, Random.Range (randColWall + 1, cols), 2] = 0;
-				sectionedMaze [randRowWall + 2, Random.Range (randColWall + 1, cols), 0] = 0;
+				sectionedMaze [randRowWall, Random.Range (randColWall + 1, endColIndex + 1), 2] = 0;
+				sectionedMaze [randRowWall + 1, Random.Range (randColWall + 1, endColIndex + 1), 0] = 0;
 			}
 			
 		} else {
 			if (randRowSlit > randRowWall) {
-				sectionedMaze [Random.Range (0, randRowWall - 1), randColWall, 1] = 0;
-				sectionedMaze [Random.Range (0, randRowWall - 1), randColWall + 2, 3] = 0;
+				sectionedMaze [Random.Range (startRowIndex, randRowWall - 1), randColWall, 1] = 0;
+				sectionedMaze [Random.Range (startRowIndex, randRowWall - 1), randColWall + 1, 3] = 0;
 			} else {
-				sectionedMaze [Random.Range (randRowWall + 1, rows), randColWall, 1] = 0;
-				sectionedMaze [Random.Range (randRowWall + 1, rows), randColWall + 2, 3] = 0;
+				sectionedMaze [Random.Range (randRowWall + 1, endRowIndex + 1), randColWall, 1] = 0;
+				sectionedMaze [Random.Range (randRowWall + 1, endRowIndex + 1), randColWall + 1, 3] = 0;
 			}
 		}
-
+		sectionedMaze = generateMazeWithRecursiveDivision (sectionedMaze, startRowIndex, randRowWall, startColIndex, randColWall);
+		sectionedMaze = generateMazeWithRecursiveDivision (sectionedMaze, randRowWall, endRowIndex, startColIndex, randColWall);
+		sectionedMaze = generateMazeWithRecursiveDivision (sectionedMaze, startRowIndex, randRowWall, randColWall, endColIndex);
+		sectionedMaze = generateMazeWithRecursiveDivision (sectionedMaze, randRowWall, endRowIndex, randColWall, endColIndex);
 		return sectionedMaze;
 	}
 
 	void Start(){
 		initializeMaze ();
-		maze = generateMazeWithRecursiveDivision (maze);
+		maze = generateMazeWithRecursiveDivision (maze, 0, rows - 1, 0, cols - 1);
 		putMazeInUnity ();
-
+		GlobalVariables.maze = maze;
 	}
 
 }
