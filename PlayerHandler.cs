@@ -14,7 +14,7 @@ public class PlayerHandler : MonoBehaviour {
 	private int playerLevel = 1;
 	private int experienceRequired = 10;
 	private int currentExperience = 0;
-	private float maxHealth = 100f;
+	private static float maxHealth = 100f;
 	private float currentHealth = maxHealth;
 	private float attackPower = 10f;
 	private float defensePower = 10f;
@@ -58,7 +58,7 @@ public class PlayerHandler : MonoBehaviour {
 			}
 		}
 		else {
-			playerLevel = level
+			playerLevel = level;
 		}
 	}
 
@@ -68,34 +68,34 @@ public class PlayerHandler : MonoBehaviour {
 	int getCurrentExperience(){ return currentExperience; }
 	void setCurrentExperience(int exp){ currentExperience = exp; }
 
-	int getMaxHealth(){ return maxHealth; }
-	void setMaxHealth(int HP){ maxHealth = HP; }
+	float getMaxHealth(){ return maxHealth; }
+	void setMaxHealth(float HP){ maxHealth = HP; }
 
-	int getCurrentHealth(){ return currentHealth; }
-	void setCurrentHealth(int HP){ currentHealth = HP; }
+	float getCurrentHealth(){ return currentHealth; }
+	void setCurrentHealth(float HP){ currentHealth = HP; }
 
-	int getAttackPower(){ return attackPower; }
-	void setAttackPower(int atk){ attackPower = atk; }
+	float getAttackPower(){ return attackPower; }
+	void setAttackPower(float atk){ attackPower = atk; }
 
-	int getDefensePower(){ return defensePower; }
-	void setDefensePower(int def){ defensePower = def; }
+	float getDefensePower(){ return defensePower; }
+	void setDefensePower(float def){ defensePower = def; }
 
-	int getLuck(){ return luck; }
-	void setLuck(int lck){ luck = lck; }
+	float getLuck(){ return luck; }
+	void setLuck(float lck){ luck = lck; }
 
-	int getAccuracy(){ return accuracy; }
-	void setAccuracy(int acc){ accuracy = acc; }
+	float getAccuracy(){ return accuracy; }
+	void setAccuracy(float acc){ accuracy = acc; }
 
-	int getSpeed(){ return speed; }
-	void setSpeed(int spd){ speed = spd; }
+	float getSpeed(){ return speed; }
+	void setSpeed(float spd){ speed = spd; }
 
-	int getJumpPower(){ return jumpPower; }
-	void setJumpPower(int jump){ jumpPower = jumpPower; }
+	float getJumpPower(){ return jumpPower; }
+	void setJumpPower(float jump){ jumpPower = jump; }
 
-	int getStatus(){ return status; }
+	float[,] getStatus(){ return status; }
 
 
-	int getInventory(){ return inventory; }
+	int[,] getInventory(){ return inventory; }
 
 
 	//________________________________________________________________________________________________________________________________________
@@ -123,7 +123,7 @@ public class PlayerHandler : MonoBehaviour {
 		if (itemIndex == 0){
 			//use health potion
 			inventory[itemIndex] -= 1;
-			currentHealth *= 1.3;
+			currentHealth *= 1.3f;
 			//keeps health below max health
 			if (currentHealth > maxHealth){
 				currentHealth = maxHealth;
@@ -133,14 +133,16 @@ public class PlayerHandler : MonoBehaviour {
 		if (itemIndex == 1){
 			//use Panacea
 			for (int i = 7; i < 12; i++){
-				status[i][0], status[i][1] = 0, 0;
+				status [i, 0] = 0;
+				status[i, 1] = 0;
 			}
 		}
 
 		if (itemIndex > 1 && itemIndex < 9){
 			//use on of the temporary boosts
 			inventory[itemIndex] -= 1;
-			status[itemIndex - 2][0], status[itemIndex - 2][1] = 20, 15;
+			status [itemIndex - 2, 0] = 20;
+			status[itemIndex - 2, 1] = 15;
 		}
 
 		//armor and broom level are not included since they are passive items
@@ -149,13 +151,13 @@ public class PlayerHandler : MonoBehaviour {
 	//method to calculate a output damage within a range
 	float calculateDamage(){
 		//a number from 90% to 100% of the base attack power is taken and then has the status and passive items applied to calculate the damage
-		return Random.Range(attackPower * .9, attackPower * 1.1) * (1 + inventory [10] [0] * .01) * (1 + status [1] [0] - status [8] [0]);
+		return Random.Range(attackPower * .9, attackPower * 1.1) * (1 + inventory [10, 0] * .01) * (1 + status [1, 0] - status [8, 0]);
 	}
 
 	//method that takes the input damage and readjusts it value based on defense
 	void takeDamage(float damage, int enemyAttackPower){
 		//readjust the damage based on the percentage difference of the enemy's attack power and the player effecctive defense
-		damage = damage * (1 - (defensePower * (1 + status[2][0] - status[9][0]) - enemyAttackPower) / defensePower);
+		damage = damage * (1 - (defensePower * (1 + status[2, 0] - status[9, 0]) - enemyAttackPower) / defensePower);
 		currentHealth -= damage;
 		//sets HP to zero if you take too much damage
 		if (currentHealth < 0) {
@@ -177,12 +179,12 @@ public class PlayerHandler : MonoBehaviour {
 	//method that will update the status effects on the player 
 	//should be processed by a timer handler to be executed every second
 	void statusUpdate(){
-		for (int i = 0; i < status.length (); i++) {
-			if (status [i] [1] == 0) {
-				status [i] [0] = 0;
+		for (int i = 0; i < status.GetLength(0); i++) {
+			if (status [i, 1] == 0) {
+				status [i, 0] = 0;
 			} 
 			else {
-				status[i][1] -= 1;
+				status[i, 1] -= 1;
 			}
 		}
 	}
@@ -196,7 +198,7 @@ public class PlayerHandler : MonoBehaviour {
 			currentExperience = currentExperience - experienceRequired;
 			playerLevel++;
 			//increments experience needed for the next level
-			experienceRequired = (int)(10 * (playerLevel) ^ (2.25));
+			experienceRequired = (int)(10 * Mathf.Pow(playerLevel, 2.25f));
 			maxHealth += Random.Range (10, 20);
 			//refresh health
 			currentHealth = maxHealth;
