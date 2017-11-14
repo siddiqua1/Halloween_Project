@@ -9,6 +9,7 @@ public class MazeGenerator : MonoBehaviour {
 	public int cols;
 	public float scaleOfEachCell;
 	public float heightOfWall;
+	public int offset = 2;
 
 	private int[,,] maze;
 	//Maze is (rows x cols x 5) where the 5 element array for each cell represents
@@ -65,12 +66,65 @@ public class MazeGenerator : MonoBehaviour {
 		//Recursive division
 		//Random row and column for a wall
 		//Put a hole in the wall for each and call function again on the smaller chambers
-		if (startRowIndex + 2 >= endRowIndex || startColIndex + 2 >= endColIndex) {
+		if (startRowIndex + 1 >= endRowIndex || startColIndex + 1 >= endColIndex) {
 			return sectionedMaze;
-		}
-		int randColWall = Random.Range (startColIndex, endColIndex - 1); //Put wall right of this column
+		} 
+		if (startRowIndex + offset >= endRowIndex || startColIndex + offset >= endColIndex) {
+			int randColWall1 = Random.Range (startColIndex, endColIndex - 1);
+			int randRowWall1 = Random.Range (startRowIndex, endRowIndex - 1);
+
+			for (int i = startColIndex; i < endColIndex + 1; i++) {
+				sectionedMaze [randRowWall1, i, 2] = 1;
+				sectionedMaze [randRowWall1 + 1, i, 0] = 1;
+			}
+			for (int i = startRowIndex; i < endRowIndex + 1; i++) {
+				sectionedMaze [i, randColWall1, 1] = 1;
+				sectionedMaze [i, randColWall1 + 1, 3] = 1;
+			}
+			int randColSlit1 = Random.Range (startColIndex, endColIndex);
+			while (randColSlit1 == randRowWall1) {
+				randColSlit1 = Random.Range (startColIndex, endColIndex);
+			}
+			sectionedMaze [randRowWall1, randColSlit1, 2] = 0;
+			sectionedMaze [randRowWall1 + 1, randColSlit1, 0] = 0;
+
+			//2nd slit
+			int randRowSlit1 = Random.Range (startRowIndex, endRowIndex);
+			while (randRowSlit1 == randColWall1) {
+				randRowSlit1 = Random.Range (startRowIndex, endRowIndex);
+			}
+			sectionedMaze [randRowSlit1, randColWall1, 1] = 0;
+			sectionedMaze [randRowSlit1, randColWall1 + 1, 3] = 0;
+
+			//Getting 3rd slit
+			if (Random.Range (0, 1) == 0) {
+				if (randColSlit1 > randColWall1) {
+					int thirdSlit = Random.Range (startColIndex, randColWall1 - 1);
+					sectionedMaze [randRowWall1, thirdSlit, 2] = 0;
+					sectionedMaze [randRowWall1 + 1, thirdSlit, 0] = 0;
+				} else {
+					int thirdSlit = Random.Range (randColWall1 + 1, endColIndex + 1);
+					sectionedMaze [randRowWall1,thirdSlit, 2] = 0;
+					sectionedMaze [randRowWall1 + 1, thirdSlit, 0] = 0;
+				}
+
+			} else {
+				if (randRowSlit1 > randRowWall1) {
+					int thirdSlit = Random.Range (startRowIndex, randRowWall1 - 1);
+					sectionedMaze [thirdSlit, randColWall1, 1] = 0;
+					sectionedMaze [thirdSlit, randColWall1 + 1, 3] = 0;
+				} else {
+					int thirdSlit = Random.Range (randRowWall1 + 1, endRowIndex + 1);
+					sectionedMaze [thirdSlit, randColWall1, 1] = 0;
+					sectionedMaze [thirdSlit, randColWall1 + 1, 3] = 0;
+				}
+			}
+
+			return sectionedMaze;
+		} 
+		int randColWall = Random.Range (startColIndex + offset, endColIndex - 1 - offset); //Put wall right of this column
 //		print("randColWall " + randColWall); 
-		int randRowWall = Random.Range (startRowIndex, endRowIndex - 1); //Put wall below this column
+		int randRowWall = Random.Range (startRowIndex + offset, endRowIndex - 1 - offset); //Put wall below this column
 //		print("randRowWall " + randRowWall); 
 
 		for (int i = startColIndex; i < endColIndex + 1; i++) {
@@ -100,20 +154,24 @@ public class MazeGenerator : MonoBehaviour {
 		//Getting 3rd slit
 		if (Random.Range (0, 1) == 0) {
 			if (randColSlit > randColWall) {
-				sectionedMaze [randRowWall, Random.Range (startColIndex, randColWall - 1), 2] = 0;
-				sectionedMaze [randRowWall + 1, Random.Range (startColIndex, randColWall - 1), 0] = 0;
+				int thirdSlit = Random.Range (startColIndex, randColWall - 1);
+				sectionedMaze [randRowWall, thirdSlit, 2] = 0;
+				sectionedMaze [randRowWall + 1, thirdSlit, 0] = 0;
 			} else {
-				sectionedMaze [randRowWall, Random.Range (randColWall + 1, endColIndex + 1), 2] = 0;
-				sectionedMaze [randRowWall + 1, Random.Range (randColWall + 1, endColIndex + 1), 0] = 0;
+				int thirdSlit = Random.Range (randColWall + 1, endColIndex + 1);
+				sectionedMaze [randRowWall,thirdSlit, 2] = 0;
+				sectionedMaze [randRowWall + 1, thirdSlit, 0] = 0;
 			}
 			
 		} else {
 			if (randRowSlit > randRowWall) {
-				sectionedMaze [Random.Range (startRowIndex, randRowWall - 1), randColWall, 1] = 0;
-				sectionedMaze [Random.Range (startRowIndex, randRowWall - 1), randColWall + 1, 3] = 0;
+				int thirdSlit = Random.Range (startRowIndex, randRowWall - 1);
+				sectionedMaze [thirdSlit, randColWall, 1] = 0;
+				sectionedMaze [thirdSlit, randColWall + 1, 3] = 0;
 			} else {
-				sectionedMaze [Random.Range (randRowWall + 1, endRowIndex + 1), randColWall, 1] = 0;
-				sectionedMaze [Random.Range (randRowWall + 1, endRowIndex + 1), randColWall + 1, 3] = 0;
+				int thirdSlit = Random.Range (randRowWall + 1, endRowIndex + 1);
+				sectionedMaze [thirdSlit, randColWall, 1] = 0;
+				sectionedMaze [thirdSlit, randColWall + 1, 3] = 0;
 			}
 		}
 		sectionedMaze = generateMazeWithRecursiveDivision (sectionedMaze, startRowIndex, randRowWall, startColIndex, randColWall);
