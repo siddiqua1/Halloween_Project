@@ -116,13 +116,13 @@ public class PlayerHandler : MonoBehaviour {
 
 	//method to use an item, there should be some cooldown method attached to the button handler
 	void UseItem(int itemIndex){
-		if (inventory[itemIndex] == 0){
+		if (inventory[itemIndex, 1] == 0){
 			//play error sound
 		}
 
 		if (itemIndex == 0){
 			//use health potion
-			inventory[itemIndex] -= 1;
+			inventory[itemIndex, 1] -= 1;
 			currentHealth *= 1.3f;
 			//keeps health below max health
 			if (currentHealth > maxHealth){
@@ -140,7 +140,7 @@ public class PlayerHandler : MonoBehaviour {
 
 		if (itemIndex > 1 && itemIndex < 9){
 			//use on of the temporary boosts
-			inventory[itemIndex] -= 1;
+			inventory[itemIndex, 1] -= 1;
 			status [itemIndex - 2, 0] = 20;
 			status[itemIndex - 2, 1] = 15;
 		}
@@ -151,7 +151,7 @@ public class PlayerHandler : MonoBehaviour {
 	//method to calculate a output damage within a range
 	float calculateDamage(){
 		//a number from 90% to 100% of the base attack power is taken and then has the status and passive items applied to calculate the damage
-		return Random.Range(attackPower * .9, attackPower * 1.1) * (1 + inventory [10, 0] * .01) * (1 + status [1, 0] - status [8, 0]);
+		return Random.Range(attackPower * .9f, attackPower * 1.1f) * (1 + inventory [10, 0] * .01f) * (1 + status [1, 0] - status [8, 0]);
 	}
 
 	//method that takes the input damage and readjusts it value based on defense
