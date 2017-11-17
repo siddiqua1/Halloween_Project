@@ -182,6 +182,7 @@ public class MazeGenerator : MonoBehaviour {
 	}
 
 	void Start(){
+		GlobalVariables.scaleOfEachCell = scaleOfEachCell;
 		initializeMaze ();
 		maze = generateMazeWithRecursiveDivision (maze, 0, rows - 1, 0, cols - 1);
 		putMazeInUnity ();

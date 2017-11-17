@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEngine;
 
 public static class GlobalVariables{
 
@@ -26,9 +27,18 @@ public static class GlobalVariables{
     //
     public static float levelMultiplier;
 
+	public static float scaleOfEachCell;
+
 	public static int[] startingPosition = new int[2];
 
 	public static int[] endingPosition = new int[2];
+
+	static int[] positionToElement(Vector3 position){
+		int[] element = new int[2];
+		element [0] = Mathf.RoundToInt (position.x / 2);
+		element [1] = Mathf.RoundToInt (position.y / 2);
+		return element;
+	}
 
     static void Update() {
         score = (timeMultiplier) * time + (levelMultiplier) * level + monstersPoints;
