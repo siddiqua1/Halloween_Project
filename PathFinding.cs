@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PathFinding : MonoBehaviour {
 
+	public string playerName;
 	public int[,] scoreMaze;
 	private int levelTracker;
 
@@ -14,7 +15,11 @@ public class PathFinding : MonoBehaviour {
 	}
 
 	void ScoreBoardRecursively(int[] currentPos){
-		if (scoreMaze[currentPos[0],currentPos[1]] != 0 && scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 && scoreMaze[currentPos[0], currentPos[1] + 1] != 0 && scoreMaze[currentPos[0] - 1, currentPos[1]] != 0 && scoreMaze[currentPos[0], currentPos[1] - 1] != 0 ){
+		if (scoreMaze[currentPos[0],currentPos[1]] != 0 &&
+			scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 &&
+			scoreMaze[currentPos[0], currentPos[1] + 1] != 0 &&
+			scoreMaze[currentPos[0] - 1, currentPos[1]] != 0 &&
+			scoreMaze[currentPos[0], currentPos[1] - 1] != 0 ){
 			return;
 		}
 		if (scoreMaze [currentPos [0], currentPos [1]] == 0) {
@@ -115,5 +120,20 @@ public class PathFinding : MonoBehaviour {
 			levelTracker = GlobalVariables.level;
 			scoreMaze = new int[GlobalVariables.maze.GetLength(0), GlobalVariables.maze.GetLength(1)];
 		}
+		Vector3 position = this.gameObject.transform.position;
+		int[] element = new int[2];
+		element [0] = Mathf.RoundToInt (position.x / 2);
+		element [1] = Mathf.RoundToInt (position.z / 2);
+		Vector3 playerPos = GameObject.Find (playerName).transform.position;
+		int[] playerPosition = new int[2];
+		playerPosition [0] = Mathf.RoundToInt (playerPos.x / 2);
+		playerPosition [1] = Mathf.RoundToInt (playerPos.z / 2);
+		Stack p = new Stack ();
+		ScoreBoardRecursively (element);
+		Stack path = getPathRecursively (element, playerPosition, p);
+		object bestPath = path.Pop ();
+		Debug.Log (bestPath);
+		//Vector3 bestPath3 = new Vector3 (bestPath.x, 0, bestPath.y);
+		//this.gameObject.transform.Translate (bestPath3 * Time.deltaTime);
 	}
 }
