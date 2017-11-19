@@ -3,35 +3,41 @@ using UnityEngine;
 
 public static class GlobalVariables{
 
-    //first is row of mze, second is column, third describes walls around and if traps on the current cell 
-    public static int[,,] maze;
-    
-    //higher int = higher difficulty should NOT be zero, as it wil be a variable affecting the enemy parameters
-    public static int difficulty;
+	//first is row of mze, second is column, third describes walls around and if traps on the current cell 
+	public static int[,,] maze;
 
-    //
-    public static int level;
+	public static int row;
 
-    //
-    public static float time;
+	public static int col;
 
-    //
-    public static float score;
+	//higher int = higher difficulty should NOT be zero, as it wil be a variable affecting the enemy parameters
+	public static int difficulty;
 
-    //
-    public static int monstersPoints;
+	//
+	public static int level;
 
-    //
-    public static float timeMultiplier;
+	//
+	public static float time;
 
-    //
-    public static float levelMultiplier;
+	//
+	public static float score;
+
+	//
+	public static int monstersPoints;
+
+	//
+	public static float timeMultiplier;
+
+	//
+	public static float levelMultiplier;
 
 	public static float scaleOfEachCell;
 
 	public static int[] startingPosition = new int[2];
 
 	public static int[] endingPosition = new int[2];
+
+	public static bool inGame = true;
 
 	static int[] positionToElement(Vector3 position){
 		int[] element = new int[2];
@@ -40,8 +46,8 @@ public static class GlobalVariables{
 		return element;
 	}
 
-    static void Update() {
-        score = (timeMultiplier) * time + (levelMultiplier) * level + monstersPoints;
-    }
+	static void Update() {
+		score = (timeMultiplier) * time + (levelMultiplier) * level + monstersPoints;
+	}
 
 }

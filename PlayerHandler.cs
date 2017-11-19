@@ -34,6 +34,8 @@ public class PlayerHandler : MonoBehaviour {
 	private Rigidbody rb;
 	private Vector3 velocity;
 
+	static int attackState = Animator.StringToHash("Base Layer.Shooting");
+
 	//parameters for the rpg element
 	private int playerLevel = 1;
 	private int experienceRequired = 10;
@@ -65,7 +67,7 @@ public class PlayerHandler : MonoBehaviour {
 	//7 - Temporary Luck Boost (15s)
 	//8 - Temporary Accuracy Boost (15s)
 	//9 - Armor Level (scales percentage-wise, level 1 = 1% boost, Level 2 = 2%, etc.)
-	//10 - Broom Level (scales percentage-wise, level 1 = 1% boost, Level 2 = 2%, etc.)
+	//10 - Spray Level (scales percentage-wise, level 1 = 1% boost, Level 2 = 2%, etc.)
 	private int[,] inventory = new int[11,100];
 
 
@@ -92,28 +94,28 @@ public class PlayerHandler : MonoBehaviour {
 	int getCurrentExperience(){ return currentExperience; }
 	void setCurrentExperience(int exp){ currentExperience = exp; }
 
-	float getMaxHealth(){ return maxHealth; }
+	float getMaxHealth(){ return maxHealth * (1f + status[0,0] + status[7,0]) ; }
 	void setMaxHealth(float HP){ maxHealth = HP; }
 
 	float getCurrentHealth(){ return currentHealth; }
 	void setCurrentHealth(float HP){ currentHealth = HP; }
 
-	float getAttackPower(){ return attackPower; }
+	float getAttackPower(){ return attackPower * (1f + status[1,0] + status[8,0]); }
 	void setAttackPower(float atk){ attackPower = atk; }
 
-	float getDefensePower(){ return defensePower; }
+	float getDefensePower(){ return defensePower * (1f + status[2,0] + status[9,0]); }
 	void setDefensePower(float def){ defensePower = def; }
 
-	float getLuck(){ return luck; }
+	float getLuck(){ return luck * (1f + status[5,0] + status[12,0]) ; }
 	void setLuck(float lck){ luck = lck; }
 
-	float getAccuracy(){ return accuracy; }
+	float getAccuracy(){ return accuracy * (1f + status[6,0] + status[13,0]) ; }
 	void setAccuracy(float acc){ accuracy = acc; }
 
-	float getSpeed(){ return speed; }
+	float getSpeed(){ return speed * (1f + status[3,0] + status[10,0]); }
 	void setSpeed(float spd){ speed = spd; }
 
-	float getJumpPower(){ return jumpPower; }
+	float getJumpPower(){ return .1f * jumpPower * (1f + status[4,0] + status[11,0]); }
 	void setJumpPower(float jump){ jumpPower = jump; }
 
 	float[,] getStatus(){ return status; }
@@ -138,35 +140,46 @@ public class PlayerHandler : MonoBehaviour {
 		accuracy = 10f;
 	}
 
+	public void addItem(int itemIndex){
+		//print ("called");
+		if (inventory [itemIndex, 1] != 99) {
+			inventory [itemIndex, 1]++;
+		}
+	}
+
 	//method to use an item, there should be some cooldown method attached to the button handler
 	void UseItem(int itemIndex){
 		if (inventory[itemIndex, 1] == 0){
 			//play error sound
+			//print("None");
 		}
 
-		if (itemIndex == 0){
+		else if (itemIndex == 0){
 			//use health potion
 			inventory[itemIndex, 1] -= 1;
-			currentHealth *= 1.3f;
+			currentHealth += maxHealth*.3f;
 			//keeps health below max health
 			if (currentHealth > maxHealth){
 				currentHealth = maxHealth;
 			}
+			print ("used");
 		}
 
-		if (itemIndex == 1){
+		else if (itemIndex == 1){
 			//use Panacea
 			for (int i = 7; i < 12; i++){
 				status [i, 0] = 0;
 				status[i, 1] = 0;
 			}
+			print ("used");
 		}
 
-		if (itemIndex > 1 && itemIndex < 9){
+		else if (itemIndex > 1 && itemIndex < 9){
 			//use on of the temporary boosts
 			inventory[itemIndex, 1] -= 1;
 			status [itemIndex - 2, 0] = 20;
 			status[itemIndex - 2, 1] = 15;
+			print ("used");
 		}
 
 		//armor and broom level are not included since they are passive items
@@ -202,13 +215,13 @@ public class PlayerHandler : MonoBehaviour {
 
 	//method that will update the status effects on the player 
 	//should be processed by a timer handler to be executed every second
-	void statusUpdate(){
+	void statusUpdate(float time){
 		for (int i = 0; i < status.GetLength(0); i++) {
 			if (status [i, 1] == 0) {
 				status [i, 0] = 0;
 			} 
 			else {
-				status[i, 1] -= 1;
+				status[i, 1] -= time;
 			}
 		}
 	}
@@ -235,6 +248,10 @@ public class PlayerHandler : MonoBehaviour {
 	}
 
 
+	public bool isAttacking(){
+		AnimatorStateInfo currentBaseState = anim.GetCurrentAnimatorStateInfo(0);
+		return currentBaseState.nameHash == attackState;
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -245,7 +262,9 @@ public class PlayerHandler : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		anim.speed = animSpeed;		
+		rb.useGravity = true;
+		anim.speed = animSpeed;	
+
 		if (Input.GetKey (KeyCode.Space)) {
 			anim.SetBool ("isShooting", true);
 			//print ("Shoot");
@@ -261,7 +280,10 @@ public class PlayerHandler : MonoBehaviour {
 			//print ("Not Moving");
 		}
 
-		rb.useGravity = true;
+		if (Input.GetKeyDown(KeyCode.D) && (transform.localPosition.y < .11f) ) {
+			print ("jump");
+			rb.AddForce (Vector3.up * getJumpPower(), ForceMode.VelocityChange);
+		}
 
 		velocity = new Vector3(0, 0, getSpeed());
 		velocity = transform.TransformDirection(velocity);
@@ -294,5 +316,36 @@ public class PlayerHandler : MonoBehaviour {
 
 			transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
 		}
+
+		if(Input.GetKeyDown(KeyCode.Alpha1)){
+			print ("pressed 1");
+			UseItem(0);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha2)){
+			UseItem(1);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha3)){
+			UseItem(2);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha4)){
+			UseItem(3);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha5)){
+			UseItem(4);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha6)){
+			UseItem(5);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha7)){
+			UseItem(6);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha8)){
+			UseItem(7);
+		}
+		if(Input.GetKeyDown(KeyCode.Alpha9)){
+			UseItem(8);
+		}
+					
+		statusUpdate(Time.deltaTime);
 	}
 }

@@ -123,9 +123,9 @@ public class MazeGenerator : MonoBehaviour {
 			return sectionedMaze;
 		} 
 		int randColWall = Random.Range (startColIndex + offset, endColIndex - 1 - offset); //Put wall right of this column
-//		print("randColWall " + randColWall); 
+		//		print("randColWall " + randColWall); 
 		int randRowWall = Random.Range (startRowIndex + offset, endRowIndex - 1 - offset); //Put wall below this column
-//		print("randRowWall " + randRowWall); 
+		//		print("randRowWall " + randRowWall); 
 
 		for (int i = startColIndex; i < endColIndex + 1; i++) {
 			sectionedMaze [randRowWall, i, 2] = 1;
@@ -162,7 +162,7 @@ public class MazeGenerator : MonoBehaviour {
 				sectionedMaze [randRowWall,thirdSlit, 2] = 0;
 				sectionedMaze [randRowWall + 1, thirdSlit, 0] = 0;
 			}
-			
+
 		} else {
 			if (randRowSlit > randRowWall) {
 				int thirdSlit = Random.Range (startRowIndex, randRowWall - 1);
@@ -187,6 +187,8 @@ public class MazeGenerator : MonoBehaviour {
 		maze = generateMazeWithRecursiveDivision (maze, 0, rows - 1, 0, cols - 1);
 		putMazeInUnity ();
 		GlobalVariables.maze = maze;
+		GlobalVariables.row = rows;
+		GlobalVariables.col = cols;
 	}
 
 }

@@ -90,25 +90,25 @@ public class PathFinding : MonoBehaviour {
 			downPos [1] = endingPos [1];
 			leftPos [0] = endingPos [0]; 
 			leftPos [1] = endingPos [1] - 1;
-			if (GlobalVariables.maze[endingPos[0], endingPos[1], 0] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[upPos[0], upPos[1]]){
+			if (upPos[0] >= 0 && GlobalVariables.maze[endingPos[0], endingPos[1], 0] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[upPos[0], upPos[1]]){
 				path.Push (Vector2.down);
 				getPathRecursively (startingPos, upPos, path);
 			}
-			if (GlobalVariables.maze[endingPos[0], endingPos[1], 1] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[rightPos[0], rightPos[1]]){
+			if (rightPos[0] < GlobalVariables.col && GlobalVariables.maze[endingPos[0], endingPos[1], 1] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[rightPos[0], rightPos[1]]){
 				path.Push (Vector2.left);
 				getPathRecursively (startingPos, rightPos, path);
 			}
-            if (GlobalVariables.maze[endingPos[0], endingPos[1], 2] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[downPos[0], downPos[1]])
-            {
-                path.Push(Vector2.up);
-                getPathRecursively(startingPos, upPos, path);
-            }
-            if (GlobalVariables.maze[endingPos[0], endingPos[1], 3] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[leftPos[0], leftPos[1]])
-            {
-                path.Push(Vector2.right);
-                getPathRecursively(startingPos, leftPos, path);
-            }
-        }
+			if (downPos[0] < GlobalVariables.row && GlobalVariables.maze[endingPos[0], endingPos[1], 2] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[downPos[0], downPos[1]])
+			{
+				path.Push(Vector2.up);
+				getPathRecursively(startingPos, downPos, path);
+			}
+			if (leftPos[0] >= 0 && GlobalVariables.maze[endingPos[0], endingPos[1], 3] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[leftPos[0], leftPos[1]])
+			{
+				path.Push(Vector2.right);
+				getPathRecursively(startingPos, leftPos, path);
+			}
+		}
 		return path;
 	}
 
