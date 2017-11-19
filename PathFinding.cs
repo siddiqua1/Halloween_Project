@@ -8,7 +8,6 @@ public class PathFinding : MonoBehaviour {
 	public int[,] scoreMaze;
 	private int levelTracker;
 
-	// Use this for initialization
 	void Start () {
 		scoreMaze = new int[GlobalVariables.maze.GetLength(0), GlobalVariables.maze.GetLength(1)];
 		levelTracker = GlobalVariables.level;
@@ -70,8 +69,8 @@ public class PathFinding : MonoBehaviour {
 		return true;
 	}
 
-	Stack getPathRecursively(int[] startingPos, int[] endingPos, Stack p){
-		Stack path = p;
+	Stack<Vector2> getPathRecursively(int[] startingPos, int[] endingPos, Stack<Vector2> p){
+		Stack<Vector2> path = p;
 		if (!boardIsScored ()) {
 			return null;
 		}
@@ -128,12 +127,11 @@ public class PathFinding : MonoBehaviour {
 		int[] playerPosition = new int[2];
 		playerPosition [0] = Mathf.RoundToInt (playerPos.x / 2);
 		playerPosition [1] = Mathf.RoundToInt (playerPos.z / 2);
-		Stack p = new Stack ();
+		Stack<Vector2> p = new Stack<Vector2> ();
 		ScoreBoardRecursively (element);
-		Stack path = getPathRecursively (element, playerPosition, p);
-		object bestPath = path.Pop ();
-		Debug.Log (bestPath);
-		//Vector3 bestPath3 = new Vector3 (bestPath.x, 0, bestPath.y);
-		//this.gameObject.transform.Translate (bestPath3 * Time.deltaTime);
+		Stack<Vector2> path = getPathRecursively (element, playerPosition, p);
+		Vector2 bestPath = path.Pop ();
+		Vector3 bestPath3 = new Vector3 (bestPath.x, 0, bestPath.y);
+		this.gameObject.transform.Translate (bestPath3 * Time.deltaTime);
 	}
 }
