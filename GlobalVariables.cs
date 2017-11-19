@@ -36,7 +36,7 @@ public static class GlobalVariables{
 	static int[] positionToElement(Vector3 position){
 		int[] element = new int[2];
 		element [0] = Mathf.RoundToInt (position.x / 2);
-		element [1] = Mathf.RoundToInt (position.y / 2);
+		element [1] = Mathf.RoundToInt (position.z / 2);
 		return element;
 	}
 
