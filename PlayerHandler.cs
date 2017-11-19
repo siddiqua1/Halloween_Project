@@ -68,14 +68,14 @@ public class PlayerHandler : MonoBehaviour {
 	//8 - Temporary Accuracy Boost (15s)
 	//9 - Armor Level (scales percentage-wise, level 1 = 1% boost, Level 2 = 2%, etc.)
 	//10 - Spray Level (scales percentage-wise, level 1 = 1% boost, Level 2 = 2%, etc.)
-	private int[,] inventory = new int[11,100];
+	private int[] inventory = new int[11];
 
 
 	//________________________________________________________________________________________________________________________________________
 	//set and get methods for each parameter
 
-	int getPlayerLevel(){ return playerLevel; }
-	void setPlayerLevel(int level, bool withIncrement = true){
+	public int getPlayerLevel(){ return playerLevel; }
+	public void setPlayerLevel(int level, bool withIncrement = true){
 		if (withIncrement) {
 			reset();
 			for (int i = 1; i < level; i++) {
@@ -88,40 +88,93 @@ public class PlayerHandler : MonoBehaviour {
 		}
 	}
 
-	int getExperienceRequired(){ return experienceRequired; }
-	void setExperienceRequired(int exp){ experienceRequired = exp; }
+	public int getExperienceRequired(){ 
+		return experienceRequired; 
+	}
+	public void setExperienceRequired(int exp){ experienceRequired = exp; }
 
-	int getCurrentExperience(){ return currentExperience; }
-	void setCurrentExperience(int exp){ currentExperience = exp; }
+	public int getCurrentExperience(){
+		return currentExperience; 
+	}
+	public void setCurrentExperience(int exp){ currentExperience = exp; }
 
-	float getMaxHealth(){ return maxHealth * (1f + status[0,0] + status[7,0]) ; }
-	void setMaxHealth(float HP){ maxHealth = HP; }
+	public float getMaxHealth(){ 
+		if (GlobalVariables.inGame) {
+			return maxHealth * (1f + status [0, 0] + status [7, 0]); 
+		} else {
+			return maxHealth;		
+		}
+	}
+	public void setMaxHealth(float HP){ maxHealth = HP; }
 
-	float getCurrentHealth(){ return currentHealth; }
-	void setCurrentHealth(float HP){ currentHealth = HP; }
+	public float getCurrentHealth(){ return currentHealth; }
+	public void setCurrentHealth(float HP){ currentHealth = HP; }
 
-	float getAttackPower(){ return attackPower * (1f + status[1,0] + status[8,0]); }
-	void setAttackPower(float atk){ attackPower = atk; }
+	public float getAttackPower(){ 
+		if (GlobalVariables.inGame) {
+			return attackPower * (1f + status[1,0] + status[8,0]);
+		} else {
+			return attackPower;		
+		}
 
-	float getDefensePower(){ return defensePower * (1f + status[2,0] + status[9,0]); }
-	void setDefensePower(float def){ defensePower = def; }
+	}
+	public void setAttackPower(float atk){ attackPower = atk; }
 
-	float getLuck(){ return luck * (1f + status[5,0] + status[12,0]) ; }
-	void setLuck(float lck){ luck = lck; }
+	public float getDefensePower(){ 
+		if (GlobalVariables.inGame) {
+			return defensePower * (1f + status[2,0] + status[9,0]); 
+		} else {
+			return defensePower;		
+		}
 
-	float getAccuracy(){ return accuracy * (1f + status[6,0] + status[13,0]) ; }
-	void setAccuracy(float acc){ accuracy = acc; }
+	}
+	public void setDefensePower(float def){ defensePower = def; }
 
-	float getSpeed(){ return speed * (1f + status[3,0] + status[10,0]); }
-	void setSpeed(float spd){ speed = spd; }
+	public float getLuck(){
+		if (GlobalVariables.inGame) {
+			return luck * (1f + status[5,0] + status[12,0]) ;
+		} else {
+			return luck;		
+		}
 
-	float getJumpPower(){ return .1f * jumpPower * (1f + status[4,0] + status[11,0]); }
-	void setJumpPower(float jump){ jumpPower = jump; }
+	}
+	public void setLuck(float lck){ luck = lck; }
 
-	float[,] getStatus(){ return status; }
+	public float getAccuracy(){
+		if (GlobalVariables.inGame) {
+			return accuracy * (1f + status[6,0] + status[13,0]) ;
+		} else {
+			return accuracy;		
+		}
+
+	}
+	public void setAccuracy(float acc){ accuracy = acc; }
+
+	public float getSpeed(){
+		if (GlobalVariables.inGame) {
+			return speed * (1f + status[3,0] + status[10,0]);
+		} else {
+			return speed;		
+		}
+
+	}
+	public void setSpeed(float spd){ speed = spd; }
+
+	public float getJumpPower(){ 
+		if (GlobalVariables.inGame) {
+			return .8f * jumpPower * (1f + status[4,0] + status[11,0]); 
+		} else {
+			return jumpPower;		
+		}
+
+	}
+	public void setJumpPower(float jump){ jumpPower = jump; }
+
+	public float[,] getStatus(){ return status; }
 
 
-	int[,] getInventory(){ return inventory; }
+	public int[] getInventory(){ return inventory; }
+	public void setInventory(int index, int amount){	inventory [index] = amount;	}
 
 
 	//________________________________________________________________________________________________________________________________________
@@ -142,21 +195,21 @@ public class PlayerHandler : MonoBehaviour {
 
 	public void addItem(int itemIndex){
 		//print ("called");
-		if (inventory [itemIndex, 1] != 99) {
-			inventory [itemIndex, 1]++;
+		if (inventory [itemIndex] != 99) {
+			inventory [itemIndex]++;
 		}
 	}
 
 	//method to use an item, there should be some cooldown method attached to the button handler
 	void UseItem(int itemIndex){
-		if (inventory[itemIndex, 1] == 0){
+		if (inventory[itemIndex] == 0){
 			//play error sound
 			//print("None");
 		}
 
 		else if (itemIndex == 0){
 			//use health potion
-			inventory[itemIndex, 1] -= 1;
+			inventory[itemIndex] -= 1;
 			currentHealth += maxHealth*.3f;
 			//keeps health below max health
 			if (currentHealth > maxHealth){
@@ -167,6 +220,7 @@ public class PlayerHandler : MonoBehaviour {
 
 		else if (itemIndex == 1){
 			//use Panacea
+			inventory[itemIndex] -= 1;
 			for (int i = 7; i < 12; i++){
 				status [i, 0] = 0;
 				status[i, 1] = 0;
@@ -176,7 +230,7 @@ public class PlayerHandler : MonoBehaviour {
 
 		else if (itemIndex > 1 && itemIndex < 9){
 			//use on of the temporary boosts
-			inventory[itemIndex, 1] -= 1;
+			inventory[itemIndex] -= 1;
 			status [itemIndex - 2, 0] = 20;
 			status[itemIndex - 2, 1] = 15;
 			print ("used");
@@ -188,7 +242,7 @@ public class PlayerHandler : MonoBehaviour {
 	//method to calculate a output damage within a range
 	float calculateDamage(){
 		//a number from 90% to 100% of the base attack power is taken and then has the status and passive items applied to calculate the damage
-		return Random.Range(attackPower * .9f, attackPower * 1.1f) * (1 + inventory [10, 0] * .01f) * (1 + status [1, 0] - status [8, 0]);
+		return Random.Range(attackPower * .9f, attackPower * 1.1f) * (1 + inventory [10] * .01f) * (1 + status [1, 0] - status [8, 0]);
 	}
 
 	//method that takes the input damage and readjusts it value based on defense

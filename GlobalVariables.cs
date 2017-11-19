@@ -26,12 +26,12 @@ public static class GlobalVariables{
 	public static int monstersPoints;
 
 	//
-	public static float timeMultiplier;
+	public static float timeMultiplier = 1f;
 
 	//
-	public static float levelMultiplier;
+	public static float levelMultiplier = 1f;
 
-	public static float scaleOfEachCell;
+	public static float scaleOfEachCell = 2f;
 
 	public static int[] startingPosition = new int[2];
 
@@ -46,8 +46,9 @@ public static class GlobalVariables{
 		return element;
 	}
 
-	static void Update() {
+	static void FixedUpdate() {
 		score = (timeMultiplier) * time + (levelMultiplier) * level + monstersPoints;
+		time += Time.deltaTime;
 	}
 
 }
