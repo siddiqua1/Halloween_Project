@@ -65,12 +65,47 @@ public class PathFinding : MonoBehaviour {
 		return true;
 	}
 
-	Stack getPath(int[] endingPos){
+	Stack getPathRecursively(int[] startingPos, int[] endingPos, Stack p){
+		Stack path = p;
 		if (!boardIsScored ()) {
 			return null;
-		} else {
-			
 		}
+		if (startingPos [0] == endingPos [0] && startingPos [1] == endingPos [1]) {
+			return path;
+		} else {
+			int[] upPos = new int[2];
+			int[] rightPos = new int[2];
+			int[] downPos = new int[2];
+			int[] leftPos = new int[2];
+
+			upPos [0] = endingPos [0] + 1; 
+			upPos [1] = endingPos [1];
+			rightPos [0] = endingPos [0]; 
+			rightPos [1] = endingPos [1] + 1;
+			downPos [0] = endingPos [0] - 1; 
+			downPos [1] = endingPos [1];
+			leftPos [0] = endingPos [0]; 
+			leftPos [1] = endingPos [1] - 1;
+			if (GlobalVariables.maze[endingPos[0], endingPos[1], 0] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[upPos[0], upPos[1]]){
+				path.Push (Vector2.down);
+				getPathRecursively (startingPos, upPos, path);
+			}
+			if (GlobalVariables.maze[endingPos[0], endingPos[1], 1] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[rightPos[0], rightPos[1]]){
+				path.Push (Vector2.left);
+				getPathRecursively (startingPos, rightPos, path);
+			}
+            if (GlobalVariables.maze[endingPos[0], endingPos[1], 2] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[downPos[0], downPos[1]])
+            {
+                path.Push(Vector2.up);
+                getPathRecursively(startingPos, upPos, path);
+            }
+            if (GlobalVariables.maze[endingPos[0], endingPos[1], 3] == 0 && scoreMaze[endingPos[0], endingPos[1]] - 10 == scoreMaze[leftPos[0], leftPos[1]])
+            {
+                path.Push(Vector2.right);
+                getPathRecursively(startingPos, leftPos, path);
+            }
+        }
+		return path;
 	}
 
 
