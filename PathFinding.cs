@@ -16,10 +16,7 @@ public class PathFinding : MonoBehaviour {
 
 	void ScoreBoardRecursively(int[] currentPos){
 
-		bool canMoveUp = GlobalVariables.maze[currentPos[0], currentPos[1], 0] == 0;
-		bool canMoveRight = GlobalVariables.maze[currentPos[0], currentPos[1], 1] == 0;
-		bool canMoveDown = GlobalVariables.maze [currentPos [0], currentPos [1], 2] == 0;
-		bool canMoveLeft = GlobalVariables.maze[currentPos[0], currentPos[1], 3] == 0;
+
 
 		int[] upPos = new int[2];
 		int[] rightPos = new int[2];
@@ -38,68 +35,139 @@ public class PathFinding : MonoBehaviour {
 		leftPos [0] = currentPos [0]; 
 		leftPos [1] = currentPos [1] - 1;
 
-		print (GlobalVariables.col - 1);
-		print (GlobalVariables.row - 1);
+		bool canMoveUp = upPos[0] >= 0 && GlobalVariables.maze[currentPos[0], currentPos[1], 0] == 0;
+		bool canMoveRight = rightPos[0] < GlobalVariables.col && GlobalVariables.maze[currentPos[0], currentPos[1], 1] == 0;
+		bool canMoveDown = downPos[0] < GlobalVariables.col && GlobalVariables.maze [currentPos [0], currentPos [1], 2] == 0;
+		bool canMoveLeft = leftPos[0] >= 0 && GlobalVariables.maze[currentPos[0], currentPos[1], 3] == 0;
 
-		//Base Case: Corners
-		if (currentPos [0] == 0 && currentPos [1] == 0 &&
-			(scoreMaze [currentPos [0], currentPos [1]] != 0) &&
-			(canMoveRight || scoreMaze [rightPos [0], rightPos [1]] != 0) &&
-			(canMoveDown || scoreMaze [downPos [0], downPos [1]] != 0)) {
+		//print (GlobalVariables.col - 1);
+		//print (GlobalVariables.row - 1);
+
+		print (currentPos [0]);
+		print (currentPos [1]);
+
+		if (currentPos [0] == 0 && currentPos [1] == 0) {
 			return;
-		} else if (currentPos [0] == 0 && currentPos [1] == GlobalVariables.col - 1 &&
-			scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveDown || scoreMaze [downPos [0], downPos [1]] != 0) &&
-			(canMoveLeft || scoreMaze [leftPos [0], leftPos [1]] != 0)){
+		}
+		if (currentPos [0] == 0 && currentPos [1] == GlobalVariables.col - 1 ) {
 			return;
-		} else if (currentPos [0] == GlobalVariables.row - 1 && currentPos [1] == 0 &&
-			scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveUp || scoreMaze [upPos [0], upPos [1]] != 0) &&
-			(canMoveRight || scoreMaze [rightPos [0], rightPos [1]] != 0)){
+		}
+		if (currentPos [0] == GlobalVariables.row - 1 && currentPos [1] == 0) {
 			return;
-		} else if (currentPos [0] == GlobalVariables.row - 1 && currentPos [1] == GlobalVariables.col - 1 &&
-			scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveUp || scoreMaze [upPos [0], upPos [1]] != 0) &&
-			(canMoveLeft || scoreMaze [leftPos [0], leftPos [1]] != 0)) {
+		}
+		if (currentPos [0] == GlobalVariables.row - 1 && currentPos [1] == GlobalVariables.col - 1 ) {
 			return;
 		}
 
-		//Base Case:Sides
-		else if (currentPos [0] == 0 && currentPos [1] > 0 && currentPos [1] < GlobalVariables.col - 1 &&
-		        scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveRight || scoreMaze [rightPos [0], rightPos [1]] != 0) &&
-			(canMoveDown || scoreMaze [downPos [0], downPos [1]] != 0) &&
-			(canMoveLeft || scoreMaze [leftPos [0], leftPos [1]] != 0)) {
-			return;
-		} else if (currentPos [0] == GlobalVariables.row - 1 && currentPos [1] > 0 && currentPos [1] < GlobalVariables.col - 1 &&
-		        scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveUp || scoreMaze [upPos [0], upPos [1]] != 0) &&
-			(canMoveRight || scoreMaze [rightPos [0], rightPos [1]] != 0) &&
-			(canMoveLeft || scoreMaze [leftPos [0], leftPos [1]] != 0)) {
-			return;
-		} else if (currentPos [1] == 0 && currentPos [0] > 0 && currentPos [0] < GlobalVariables.row - 1 &&
-		        scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveUp || scoreMaze [upPos [0], upPos [1]] != 0) &&
-			(canMoveRight || scoreMaze [rightPos [0], rightPos [1]] != 0) &&
-			(canMoveDown || scoreMaze [downPos [0], downPos [1]] != 0)){
-			return;
-		} else if (currentPos [1] == GlobalVariables.col - 1 && currentPos [0] > 0 && currentPos [0] < GlobalVariables.row - 1 &&
-		        scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveUp || scoreMaze [upPos [0], upPos [1]] != 0) &&
-			(canMoveDown || scoreMaze [downPos [0], downPos [1]] != 0) &&
-			(canMoveLeft || scoreMaze [leftPos [0], leftPos [1]] != 0)) {
-			return;
-		}
+		if (currentPos [1] == 0) {
+			if (canMoveRight && scoreMaze[rightPos[0], rightPos[1]] != 0) {
+				if (canMoveUp) {
+					if (scoreMaze [upPos [0], upPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveDown) {
+					if (scoreMaze [downPos [0], downPos [1]] != 0) {
+						return;
+					}
+				}
+			} else {
+				if (canMoveUp) {
+					if (scoreMaze [upPos [0], upPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveDown) {
+					if (scoreMaze [downPos [0], downPos [1]] != 0) {
+						return;
+					}
+				}
+			}
+		} 
+
+		if (currentPos [1] == GlobalVariables.col - 1) {
+			if (canMoveLeft && scoreMaze[leftPos[0], leftPos[1]] != 0) {
+				if (canMoveUp) {
+					if (scoreMaze [upPos [0], upPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveDown) {
+					if (scoreMaze [downPos [0], downPos [1]] != 0) {
+						return;
+					}
+				}
+			} else {
+				if (canMoveUp) {
+					if (scoreMaze [upPos [0], upPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveDown) {
+					if (scoreMaze [downPos [0], downPos [1]] != 0) {
+						return;
+					}
+				}
+			}
+		} 
+
+		if (currentPos [0] == 0) {
+			if (canMoveDown && scoreMaze[downPos[0], downPos[1]] != 0) {
+				if (canMoveLeft) {
+					if (scoreMaze [leftPos [0], leftPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveRight) {
+					if (scoreMaze [rightPos [0], rightPos [1]] != 0) {
+						return;
+					}
+				}
+			} else {
+				if (canMoveLeft) {
+					if (scoreMaze [leftPos [0], leftPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveRight) {
+					if (scoreMaze [rightPos [0], rightPos [1]] != 0) {
+						return;
+					}
+				}
+			}
+		} 
+
+		if (currentPos [0] == GlobalVariables.row - 1) {
+			if (canMoveUp && scoreMaze[upPos[0], upPos[1]] != 0) {
+				if (canMoveLeft) {
+					if (scoreMaze [leftPos [0], leftPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveRight) {
+					if (scoreMaze [rightPos [0], rightPos [1]] != 0) {
+						return;
+					}
+				}
+			} else {
+				if (canMoveLeft) {
+					if (scoreMaze [leftPos [0], leftPos [1]] != 0) {
+						return;
+					}
+				}
+				if (canMoveRight) {
+					if (scoreMaze [rightPos [0], rightPos [1]] != 0) {
+						return;
+					}
+				}
+			}
+		} 
+
+
 
 		//Base Case: Everything else
 
-		else if (scoreMaze [currentPos [0], currentPos [1]] != 0 &&
-			(canMoveUp || scoreMaze [upPos [0], upPos [1]] != 0) &&
-			(canMoveRight || scoreMaze [rightPos [0], rightPos [1]] != 0) &&
-			(canMoveDown || scoreMaze [downPos [0], downPos [1]] != 0) &&
-			(canMoveLeft || scoreMaze [leftPos [0], leftPos [1]] != 0)) {
-			return;			
-		}
+
 		
 		/*
 		catch (Exception e){

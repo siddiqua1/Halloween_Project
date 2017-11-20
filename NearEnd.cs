@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class NearEnd : MonoBehaviour {
 
-	public string playerName;
+	public GameObject player;
 
 	void Update () {
-		Vector3 playerPos = GameObject.Find (playerName).transform.position;
-		if ((playerPos - new Vector3 (GlobalVariables.scaleOfEachCell * (GlobalVariables.row - 1), 0, GlobalVariables.scaleOfEachCell * (GlobalVariables.col - 1))).sqrMagnitude < 0.5) {
-
+		Vector3 playerPos = player.transform.position;
+		Vector3 endPos = new Vector3(GlobalVariables.endingPosition[0] * GlobalVariables.scaleOfEachCell, 0 , GlobalVariables.endingPosition[1] * GlobalVariables.scaleOfEachCell);
+		//print ((playerPos-endPos).sqrMagnitude);
+		if ((playerPos-endPos).sqrMagnitude < 1) {
+			this.gameObject.GetComponent<GameHandler> ().nextLevel ();
 		}
 	}
 }

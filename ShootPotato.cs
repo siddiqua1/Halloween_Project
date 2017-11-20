@@ -24,6 +24,10 @@ public class ShootPotato : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (!GlobalVariables.inGame) {
+			return;
+		}
+
 		if (this.gameObject.CompareTag("Player") && Input.GetKey (KeyCode.Space) && Launcher.GetComponent<PlayerHandler>().isAttacking())
         {
 			GameObject bullet = Instantiate(projectile, transform.position + new Vector3(0, .9f, 0) + Launcher.transform.forward * .4f, Quaternion.identity) as GameObject;
@@ -35,10 +39,6 @@ public class ShootPotato : MonoBehaviour {
 			Vector3 vectorOfTravel = Launcher.transform.forward; 
             bullet.GetComponent<Rigidbody>().AddForce(vectorOfTravel * force);
         }
-        else if (gameObject.transform.position.y < 0) {
-            Destroy(gameObject);
-        }
-
 		if (this.gameObject.CompareTag ("Bullet")) {
 			if (life > 0) {
 				life--;

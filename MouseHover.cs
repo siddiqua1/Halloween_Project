@@ -9,6 +9,7 @@ public class MouseHover : MonoBehaviour {
 	}
 	
 	void OnMouseEnter() {
+		//print ("Detect");
 		GetComponent<Renderer>().material.color = Color.red;
 	}
 	

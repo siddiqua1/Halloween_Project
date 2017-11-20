@@ -240,13 +240,13 @@ public class PlayerHandler : MonoBehaviour {
 	}
 
 	//method to calculate a output damage within a range
-	float calculateDamage(){
+	public float calculateDamage(){
 		//a number from 90% to 100% of the base attack power is taken and then has the status and passive items applied to calculate the damage
 		return Random.Range(attackPower * .9f, attackPower * 1.1f) * (1 + inventory [10] * .01f) * (1 + status [1, 0] - status [8, 0]);
 	}
 
 	//method that takes the input damage and readjusts it value based on defense
-	void takeDamage(float damage, int enemyAttackPower){
+	void takeDamage(float damage, float enemyAttackPower){
 		//readjust the damage based on the percentage difference of the enemy's attack power and the player effecctive defense
 		damage = damage * (1 - (defensePower * (1 + status[2, 0] - status[9, 0]) - enemyAttackPower) / defensePower);
 		currentHealth -= damage;
@@ -307,6 +307,12 @@ public class PlayerHandler : MonoBehaviour {
 		return currentBaseState.nameHash == attackState;
 	}
 
+	void onCollisionEnter(Collision col){
+		if (col.gameObject.CompareTag ("Enemy")) {
+			takeDamage (col.gameObject.GetComponent<EnemyHandler> ().calculateDamage (), col.gameObject.GetComponent<EnemyHandler>().getAttackPower());
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator>();
@@ -316,6 +322,10 @@ public class PlayerHandler : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		if (!GlobalVariables.inGame) {
+			return;
+		}
+
 		rb.useGravity = true;
 		anim.speed = animSpeed;	
 
@@ -372,7 +382,7 @@ public class PlayerHandler : MonoBehaviour {
 		}
 
 		if(Input.GetKeyDown(KeyCode.Alpha1)){
-			print ("pressed 1");
+			//print ("pressed 1");
 			UseItem(0);
 		}
 		if(Input.GetKeyDown(KeyCode.Alpha2)){

@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif 
 using System.IO;
 
 public class SaveFiles : MonoBehaviour {
 
 	GameObject player;
 
+	#if UNITY_EDITOR
 	[MenuItem("Tools/Write file")]
-	void SaveToText(int saveNumber){
+	#endif
+	public void SaveToText(int saveNumber){
 		string path = "Saves/save" + saveNumber + ".txt";
 		StreamWriter writer = new StreamWriter(path, true);
 		writer.WriteLine(GlobalVariables.row);
@@ -43,8 +47,10 @@ public class SaveFiles : MonoBehaviour {
 		writer.Close();
 	}
 
+	#if UNITY_EDITOR
 	[MenuItem("Tools/Read file")]
-	void LoadFromText(int saveNumber){
+	#endif
+	public void LoadFromText(int saveNumber){
 		string path = "Saves/save" + saveNumber + ".txt";
 		StreamReader reader = new StreamReader(path); 
 		string a = reader.ReadToEnd();

@@ -17,11 +17,17 @@ public class PlaceRandomCollectablesRandomly : MonoBehaviour {
 		newItem.transform.localScale = new Vector3(scale,scale,scale); 
 		newItem.AddComponent<CapsuleCollider> ();
 		newItem.AddComponent<ItemHandler> ();
+		newItem.GetComponent<ItemHandler> ().index = item;
 	}
 		
 	//For every 30s, an item spawns
-	void Update () {
-		if (GlobalVariables.time % 60 < .5) {
+	void FixedUpdate () {
+		//print (GlobalVariables.time);
+		//print (GlobalVariables.time % 60f);
+		if (! GlobalVariables.inGame){
+			return;
+		}
+		if (GlobalVariables.time % 60f < .2f) {
 			placeRandomly (Random.Range (0, items.Length));
 		}
 	}

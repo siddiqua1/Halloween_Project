@@ -14,10 +14,10 @@ public static class GlobalVariables{
 	public static int difficulty;
 
 	//
-	public static int level;
+	public static int level = 1;
 
 	//
-	public static float time;
+	public static float time = 0f;
 
 	//
 	public static float score;
@@ -37,7 +37,7 @@ public static class GlobalVariables{
 
 	public static int[] endingPosition = new int[2];
 
-	public static bool inGame = true;
+	public static bool inGame = false;
 
 	static int[] positionToElement(Vector3 position){
 		int[] element = new int[2];
@@ -46,9 +46,6 @@ public static class GlobalVariables{
 		return element;
 	}
 
-	static void FixedUpdate() {
-		score = (timeMultiplier) * time + (levelMultiplier) * level + monstersPoints;
-		time += Time.deltaTime;
-	}
+
 
 }

@@ -27,6 +27,9 @@ public class CameraController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+		if (!GlobalVariables.inGame) {
+			return;
+		}
 		//If the c button is pressed, switch to the next camera
 		//Set the camera at the current index to inactive, and set the next one in the array to active
 		//When we reach the end of the camera array, move back to the beginning or the array.

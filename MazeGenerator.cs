@@ -11,36 +11,60 @@ public class MazeGenerator : MonoBehaviour {
 	public float heightOfWall;
 	public int offset = 2;
 
+	public List<GameObject> planes = new List<GameObject>();
+
 	private int[,,] maze;
 	//Maze is (rows x cols x 5) where the 5 element array for each cell represents
 	//The 5 element array = [WallUp, WallRight, WallDown, WallLeft, trapType] where 1 represents true and 0 represents false
 
 	public GameObject floor;
 	public GameObject wall;
+	public GameObject enemy;
+
+	public void setSize(int r, int c){
+		rows = r;
+		cols = c;
+	}
+
+	public void removeMaze(){
+		for (int i = 0; i < planes.Count; i++) {
+			Destroy (planes [i]);
+		}
+		planes.Clear ();
+	}
 
 	void putMazeInUnity(){
 		for (int r = 0; r < rows; r++) {
 			for (int c = 0; c < cols; c++) {
 				GameObject newFloor = Instantiate (floor, new Vector3 (r*scaleOfEachCell, 0, c*scaleOfEachCell), Quaternion.identity) as GameObject; 
+				if (r == GlobalVariables.endingPosition [0] && c == GlobalVariables.endingPosition [1]) {
+					newFloor.GetComponent<Renderer> ().material.color = Color.red;
+				}
+				planes.Add (newFloor);
+
 				if (maze [r,c,0] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 180, 90);
 					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell - scaleOfEachCell / 2, heightOfWall/2, c*scaleOfEachCell), q) as GameObject;
+					planes.Add (gameWall);
 				}
 				if (maze [r,c,1] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 270, 90);
 					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell, heightOfWall/2, c*scaleOfEachCell + scaleOfEachCell / 2), q) as GameObject;
+					planes.Add (gameWall);
 				}
 				if (maze [r,c,2] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 0, 90);
 					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell + scaleOfEachCell / 2, heightOfWall/2, c*scaleOfEachCell), q) as GameObject;
+					planes.Add (gameWall);
 				}
 				if (maze [r,c,3] == 1) {
 					Quaternion q = Quaternion.identity;
 					q.eulerAngles = new Vector3 (0, 90, 90);
 					GameObject gameWall = Instantiate (wall, new Vector3 (r*scaleOfEachCell, heightOfWall/2, c*scaleOfEachCell - scaleOfEachCell / 2), q) as GameObject;
+					planes.Add (gameWall);
 				}				
 			}
 		}
@@ -181,14 +205,35 @@ public class MazeGenerator : MonoBehaviour {
 		return sectionedMaze;
 	}
 
-	void Awake(){
+	public void startMaze(){
+		removeMaze ();
 		GlobalVariables.scaleOfEachCell = scaleOfEachCell;
 		initializeMaze ();
+		GlobalVariables.startingPosition [0] = Random.Range (0, rows);
+		GlobalVariables.startingPosition [1] = Random.Range (0, cols);
+		GlobalVariables.endingPosition [0] = Random.Range (0, rows);
+		GlobalVariables.endingPosition [1] = Random.Range (0, cols);
+
 		maze = generateMazeWithRecursiveDivision (maze, 0, rows - 1, 0, cols - 1);
 		putMazeInUnity ();
 		GlobalVariables.maze = maze;
 		GlobalVariables.row = rows;
 		GlobalVariables.col = cols;
+
+		for (int i = 0; i < rows / 4; i++) {
+			Vector3 pos = new Vector3(Random.Range (0, rows) *scaleOfEachCell, 0, Random.Range (0, cols) * scaleOfEachCell);
+			GameObject e = Instantiate (enemy, pos, Quaternion.identity) as GameObject;
+			print ("enemy created");
+			enemy.AddComponent<Rigidbody> ();
+			enemy.AddComponent<EnemyHandler> ();
+
+			enemy.GetComponent<Rigidbody> ().freezeRotation = true;
+
+			enemy.GetComponent<EnemyHandler>().setMaxHealth(Random.Range(100f * GlobalVariables.level * .7f, 100f * GlobalVariables.level * 1.3f));
+			enemy.GetComponent<EnemyHandler>().setCurrentHealth(enemy.GetComponent<EnemyHandler>().getMaxHealth());
+			enemy.GetComponent<EnemyHandler> ().setAttackPower (Random.Range (10f * GlobalVariables.level * .7f, 10f * GlobalVariables.level * 1.3f));
+			enemy.GetComponent<EnemyHandler> ().setDefensePower (Random.Range (10f * GlobalVariables.level * .7f, 10f * GlobalVariables.level * 1.3f));
+		}
 	}
 
 }

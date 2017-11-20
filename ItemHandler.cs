@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemHandler : MonoBehaviour {
 
-	private int index;
+	public int index;
 
 	void setIndex(int i){
 		index = i;
