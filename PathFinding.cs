@@ -15,64 +15,86 @@ public class PathFinding : MonoBehaviour {
 
 	void ScoreBoardRecursively(int[] currentPos){
 
+		int[] upPos = new int[2];
+		int[] rightPos = new int[2];
+		int[] downPos = new int[2];
+		int[] leftPos = new int[2];
+
+		upPos [0] = currentPos [0] - 1; 
+		upPos [1] = currentPos [1];
+
+		rightPos [0] = currentPos [0]; 
+		rightPos [1] = currentPos [1] + 1;
+
+		downPos [0] = currentPos [0] + 1; 
+		downPos [1] = currentPos [1];
+
+		leftPos [0] = currentPos [0]; 
+		leftPos [1] = currentPos [1] - 1;
+
+
 		//Base Case: Corners
 		if (currentPos[0] == 0 && currentPos[1] == 0 && 
 			scoreMaze[currentPos[0],currentPos[1]] != 0 && 
-			scoreMaze[currentPos[0], currentPos[1] + 1] != 0 && 
-			scoreMaze[currentPos[0] - 1, currentPos[1]] != 0) {
+			scoreMaze[rightPos[0], rightPos[1]] != 0 && 
+			scoreMaze[downPos[0], downPos[1]] != 0) {
 			return;
 		}
 		if (currentPos[0] == 0 && currentPos[1] == GlobalVariables.col - 1 && 
 			scoreMaze[currentPos[0],currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0] - 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] - 1] != 0) {
+			scoreMaze[downPos[0], downPos[1]] != 0 &&
+			scoreMaze[leftPos[0], leftPos[1]] != 0) {
 			return;
 		}
 		if (currentPos[0] == GlobalVariables.row - 1 && currentPos[1] == 0 && 
 			scoreMaze[currentPos[0],currentPos[1]] != 0 && 
-			scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] + 1] != 0) {
+			scoreMaze[upPos[0], upPos[1]] != 0 &&
+			scoreMaze[rightPos[0], rightPos[1]] != 0) {
 			return;
 		}
 		if (currentPos[0] == GlobalVariables.row - 1 && currentPos[1] == GlobalVariables.col - 1 && 
 			scoreMaze[currentPos[0],currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] - 1] != 0 ) {
+			scoreMaze[upPos[0], upPos[1]] != 0 &&
+			scoreMaze[leftPos[0], leftPos[1]] != 0 ) {
 			return;
 		}
 
 		//Base Case:Sides
 		if(currentPos[0] == 0 && currentPos[1] > 0 && currentPos[1] < GlobalVariables.col - 1 &&
-			scoreMaze[currentPos[0], currentPos[1] + 1] != 0 &&
-			scoreMaze[currentPos[0] - 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] - 1] != 0 ){
+			scoreMaze[currentPos[0],currentPos[1]] != 0 &&
+			scoreMaze[rightPos[0], rightPos[1]] != 0 &&
+			scoreMaze[downPos[0], downPos[1]] != 0 &&
+			scoreMaze[leftPos[0], leftPos[1]] != 0){
 			return;
 		}
 		if(currentPos[0] == GlobalVariables.row - 1 && currentPos[1] > 0 && currentPos[1] < GlobalVariables.col - 1 && 
-			scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] + 1] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] - 1] != 0 ){
+			scoreMaze[currentPos[0],currentPos[1]] != 0 &&
+			scoreMaze[upPos[0], upPos[1]] != 0 &&
+			scoreMaze[rightPos[0], rightPos[1]] != 0 &&
+			scoreMaze[leftPos[0], leftPos[1]] != 0 ){
 			return;
 		}
 		if(currentPos[1] == 0 && currentPos[0] > 0 && currentPos[0] < GlobalVariables.row - 1 &&
-			scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] + 1] != 0 &&
-			scoreMaze[currentPos[0] - 1, currentPos[1]] != 0 ){
+			scoreMaze[currentPos[0],currentPos[1]] != 0 &&
+			scoreMaze[upPos[0], upPos[1]] != 0 &&
+			scoreMaze[rightPos[0], rightPos[1]] != 0 &&
+			scoreMaze[downPos[0], downPos[1]] != 0){
 			return;
 		}
 		if(currentPos[1] == GlobalVariables.col - 1 && currentPos[0] > 0 && currentPos[0] < GlobalVariables.row - 1 &&
-			scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0] - 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] - 1] != 0 ){
+			scoreMaze[currentPos[0],currentPos[1]] != 0 &&
+			scoreMaze[upPos[0], upPos[1]] != 0 &&
+			scoreMaze[downPos[0], downPos[1]] != 0 &&
+			scoreMaze[leftPos[0], leftPos[1]] != 0 ){
 			return;
 		}
 
 		//Base Case: Everything else
 		if (scoreMaze[currentPos[0],currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0] + 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] + 1] != 0 &&
-			scoreMaze[currentPos[0] - 1, currentPos[1]] != 0 &&
-			scoreMaze[currentPos[0], currentPos[1] - 1] != 0 ){
+			scoreMaze[upPos[0], upPos[1]] != 0 &&
+			scoreMaze[rightPos[0], rightPos[1]] != 0 &&
+			scoreMaze[downPos[0], downPos[1]] != 0 &&
+			scoreMaze[leftPos[0], leftPos[1]] != 0 ){
 			return;
 		}
 
@@ -80,19 +102,6 @@ public class PathFinding : MonoBehaviour {
 			scoreMaze [currentPos [0], currentPos [1]] = 1;
 		}
 
-		int[] upPos = new int[2];
-		int[] rightPos = new int[2];
-		int[] downPos = new int[2];
-		int[] leftPos = new int[2];
-
-		upPos [0] = currentPos [0] + 1; 
-		upPos [1] = currentPos [1];
-		rightPos [0] = currentPos [0]; 
-		rightPos [1] = currentPos [1] + 1;
-		downPos [0] = currentPos [0] - 1; 
-		downPos [1] = currentPos [1];
-		leftPos [0] = currentPos [0]; 
-		leftPos [1] = currentPos [1] - 1;
 
 
 
@@ -111,10 +120,23 @@ public class PathFinding : MonoBehaviour {
 			scoreMaze [leftPos[0], leftPos[1]] = scoreMaze [currentPos [0], currentPos [1]] + 10;
 		}
 
-		ScoreBoardRecursively (upPos);
-		ScoreBoardRecursively (rightPos);
-		ScoreBoardRecursively (downPos);
-		ScoreBoardRecursively (leftPos);
+		if (upPos [0] >= 0) {
+			ScoreBoardRecursively (upPos);
+		}
+		if (rightPos [0] < GlobalVariables.col) {
+			ScoreBoardRecursively (rightPos);
+		}
+		if (downPos [0] < GlobalVariables.row) {
+			ScoreBoardRecursively (downPos);
+		}
+		if (leftPos [0] >= 0) {
+			ScoreBoardRecursively (leftPos);
+		}
+
+
+
+
+
 	}
 
 	bool boardIsScored(){
